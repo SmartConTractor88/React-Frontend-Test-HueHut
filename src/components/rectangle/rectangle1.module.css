@@ -1,0 +1,21 @@
+.rectangle {
+  aspect-ratio: 1 / 1; 
+  background: #bbbbbb81;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  cursor: pointer;
+  margin: 0px;
+  transition-duration: 0.2s;
+}
+
+.rectangle:hover {
+    transform: scale(1.03) perspective(1px);
+}
+
+.icon {
+  height: 40px;
+}
