@@ -3,6 +3,11 @@
   grid-template-columns: repeat(3, 1fr); /* 2 collumns */
   gap: 40px;
   margin-top: 40px;
-  margin-left: 40px;
-  margin-right: 40px;
+  margin-left: 160px;
+  margin-right: 160px;
+}
+
+.link_text {
+  text-decoration: none;
+  color: inherit;
 }

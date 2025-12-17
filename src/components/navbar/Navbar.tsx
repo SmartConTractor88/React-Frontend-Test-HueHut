@@ -1,12 +1,21 @@
 import styles from "./Navbar.module.css";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 function Navbar() {
     return (
         <nav className={styles.navbar}>
-            <button className={styles.button} onClick={() => console.log("CLICKED")}><NavLink to="/">Home</NavLink></button>
-            <button className={styles.button}><NavLink to="/colorpalettegeneratorlaunch">Color Palette Generator Launcher</NavLink></button>
-            <button className={styles.button}><NavLink to="/community">Community</NavLink></button>
+            <Link className={styles.link_text} to="/">
+            <div className={styles.logo_wrapper}>
+                <p className={styles.navbar_logo}>HueHut</p>
+                <img src="HueHut_drop.png" alt="" className={styles.logo_drop}/>
+            </div>
+            </Link>
+
+            <div className={styles.navbar_buttons}>
+                <button className={[styles.button, styles.home_button].join(" ")} onClick={() => console.log("CLICKED")}><NavLink to="/">Home</NavLink></button>
+                <button className={[styles.button, styles.community_button].join(" ")}><NavLink to="/community">Community</NavLink></button>
+                <button className={[styles.button, styles.contact_button].join(" ")}><NavLink to="/community">Contact</NavLink></button>
+            </div>
         </nav>
     );
 }

@@ -1,13 +1,49 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
 
   color: rgba(0, 0, 0, 0.87);
   background-color: #e4e4e4;
 
 }
 
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Nunito – Secondary font */
+@font-face {
+  font-family: 'Nunito';
+  src: url('/fonts/Nunito-ExtraLight.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Onest – Branding font */
+@font-face {
+  font-family: 'Onest';
+  src: url('/fonts/Onest-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Dongle */
+@font-face {
+  font-family: 'Dongle';
+  src: url('/fonts/Dongle-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+
 body {
-  margin: 40 40px;
+  margin: 0px;
 }
 
 h1 {

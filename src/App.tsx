@@ -4,10 +4,8 @@ import MainLayout from "./components/layouts/MainLayout";
 import ToolLayout from "./components/layouts/ToolLayout";
 
 import Home from "./pages/Home";
-import ColorPaletteGeneratorLaunch from "./pages/ColorPaletteGeneratorLaunch";
 import Community from "./pages/Community";
-
-import ColorPaletteGenerator from "./tools/ColorPaletteGenerator";
+import ColorPaletteGenerator from "./pages/ColorPaletteGenerator";
 
 function App() {
   return (
@@ -17,13 +15,22 @@ function App() {
         {/* Routes WITH navbar */}
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/colorpalettegeneratorlaunch" element={<ColorPaletteGeneratorLaunch />} />
           <Route path="/community" element={<Community />} />
+          
+          {/* Base generator page */}
+          <Route path="/colorpalettegenerator"
+            element={<ColorPaletteGenerator />}
+          />
+
+          {/* Palette via URL */}
+          <Route path="/colorpalettegenerator/:palette"
+            element={<ColorPaletteGenerator />}
+          />
         </Route>
 
         {/* Routes WITHOUT navbar */}
         <Route element={<ToolLayout />}>
-          <Route path="/colorpalettegenerator" element={<ColorPaletteGenerator />} />
+          
         </Route>
 
       </Routes>
