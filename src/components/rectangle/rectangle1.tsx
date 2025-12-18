@@ -19,7 +19,7 @@ export default function Rectangle({ title, caption, icon, image }: RectangleProp
     >
       <h1>{title}</h1>
       <h3>{caption}</h3>
-      {icon && <div className="icon">{icon}</div>}
+      {icon && <div className={styles.icon}>{icon}</div>}
 
     </div>
   );

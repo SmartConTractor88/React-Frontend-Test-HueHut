@@ -39,7 +39,7 @@
   z-index: 0;
 }
 
-/* Overlay layer (your existing one) */
+/* Overlay layer */
 .rectangle::after {
   content: "";
   position: absolute;
@@ -57,6 +57,11 @@
   z-index: 2;
 }
 
+.icon {
+  font-size: 3em;
+  transition: transform 0.6s ease-in-out;
+}
+
 .rectangle:hover {
   transform: scale(1.03);
 }
@@ -66,7 +71,6 @@
   filter: saturate(1);
 }
 
-.icon {
-  height: 40px;
+.rectangle:hover .icon {
+  transform: translateX(15px);
 }
-
