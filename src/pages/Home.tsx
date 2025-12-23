@@ -2,7 +2,7 @@
 import styles from "./Home.module.css";
 import Rectangle from "../components/rectangle/rectangle1";
 import { Link } from "react-router-dom";
-import { FaPaintBrush, FaArrowRight, FaLongArrowAltRight } from "react-icons/fa";
+import { FaPaintBrush, FaArrowRight } from "react-icons/fa";
 
 
 // Event handler
@@ -25,7 +25,7 @@ export default function Home() {
         rel="noopener noreferrer"
         >
           <Rectangle
-            title="Color Palette"
+            title="Palette Generator"
             caption="Find the right colors for you"
             icon={<FaPaintBrush />}
             image="palette_generator_launch.jpg"

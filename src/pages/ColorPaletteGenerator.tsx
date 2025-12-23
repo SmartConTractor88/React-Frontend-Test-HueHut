@@ -9,7 +9,8 @@ import {
   FaLockOpen,
   FaLock,
   FaRegHeart,
-  FaHeart
+  FaHeart,
+  FaTimes
 } from "react-icons/fa";
 
 /*
@@ -52,33 +53,53 @@ export default function ColorPaletteGenerator() {
     colors are stored as an array of hex strings
     start empty so the url or generator decides what gets shown
   */
-  const [colors, setColors] = useState<string[]>([]);
+  type ColorItem = {
+    id: string;
+    hex: string;
+    locked: boolean;
+  };
+
+  const [colors, setColors] = useState<ColorItem[]>([]);
 
   /*
     generates a new palette
     updates both the visual state and the url
   */
+  
   function generateColors() {
-    // create 5 random colors
-    const newColors = Array.from({ length: 5 }, () => colorAlgo());
+    setColors(prevColors => {
+      // first load: create default palette
+      if (prevColors.length === 0) {
+        const initialColors = Array.from({ length: 5 }, () => ({
+          id: `${Date.now()}-${Math.random()}`,
+          hex: colorAlgo(),
+          locked: false
+        }));
 
-    // update react state
-    setColors(newColors);
+        const paletteParam = initialColors
+          .map(c => c.hex.replace("#", "").toLowerCase())
+          .join("-");
 
-    /*
-      convert colors into a url-safe format
-      "#778899" -> "778899"
-      then join them with "-"
-    */
-    const paletteParam = newColors
-      .map(c => c.replace("#", "").toLowerCase())
-      .join("-");
+        navigate(`/colorpalettegenerator/${paletteParam}`, { replace: true });
 
-    /*
-      update the url without adding a new history entry
-      this keeps the back button behavior clean
-    */
-    navigate(`/colorpalettegenerator/${paletteParam}`, { replace: true });
+        return initialColors;
+      }
+
+      // normal generation: respect locks
+      const updatedColors = prevColors.map(color =>
+        color.locked
+          ? color
+          : { ...color, hex: colorAlgo() }
+      );
+
+      const paletteParam = updatedColors
+        .map(c => c.hex.replace("#", "").toLowerCase())
+        .join("-");
+
+      navigate(`/colorpalettegenerator/${paletteParam}`, { replace: true });
+
+      return updatedColors;
+    });
   }
 
   /*
@@ -89,23 +110,36 @@ export default function ColorPaletteGenerator() {
     - when the url palette changes
   */
   useEffect(() => {
+    // do not overwrite existing state
+    if (colors.length > 0) return;
+
     if (palette) {
       const parsedColors = parsePaletteFromUrl(palette);
 
-      // if the url contains valid colors, use them
       if (parsedColors.length > 0) {
-        setColors(parsedColors);
+        setColors(
+          parsedColors.map(hex => ({
+            id: crypto.randomUUID(),
+            hex,
+            locked: false
+          }))
+        );
         return;
       }
     }
 
-    /*
-      if there is no palette in the url
-      or the url is invalid,
-      generate a new one automatically
-    */
     generateColors();
   }, [palette]);
+
+  function toggleLock(id: string) {
+    setColors(prev =>
+      prev.map(color =>
+        color.id === id
+          ? { ...color, locked: !color.locked }
+          : color
+      )
+    );
+  }
 
   return (
     <>
@@ -116,26 +150,32 @@ export default function ColorPaletteGenerator() {
       </div>
 
       <div className={styles.palette}>
-        {colors.map((color, index) => (
+        {colors.map(color => (
           <div
-            key={index}
+            key={color.id}
             className={styles.color_block}
-            style={{ backgroundColor: color }}
+            style={{ backgroundColor: color.hex }}
           >
-            <div className={styles.hex_code_wrapper}>
-              <p className={styles.hex_code}>
-                {color.toUpperCase()}
-              </p>
+            <div className={styles.hex_code_wrapper}></div>
+
+            <div className={styles.hex_code}>
+              {color.hex.toUpperCase()}
             </div>
 
             <div className={styles.color_features}>
               <FaCopy />
               <FaCheck />
               <FaArrowsAltH />
-              <FaLockOpen />
-              <FaLock />
+
+              {color.locked ? (
+                <FaLock onClick={() => toggleLock(color.id)} />
+              ) : (
+                <FaLockOpen onClick={() => toggleLock(color.id)} />
+              )}
+
               <FaRegHeart />
               <FaHeart />
+              <FaTimes />
             </div>
           </div>
         ))}

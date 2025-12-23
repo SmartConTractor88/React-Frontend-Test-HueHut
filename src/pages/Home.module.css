@@ -2,9 +2,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 2 collumns */
   gap: 40px;
-  margin-top: 40px;
-  margin-left: 240px;
-  margin-right: 240px;
+  margin: 40px 240px;
 }
 
 .link_text {
