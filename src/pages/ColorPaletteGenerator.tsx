@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styles from "./ColorPaletteGenerator.module.css";
 import colorAlgo from "../tools/ColorAlgorithm";
+
 import {
   FaCopy,
   FaCheck,
@@ -13,6 +14,24 @@ import {
   FaTimes
 } from "react-icons/fa";
 
+import {
+  DndContext,
+  PointerSensor,
+  useSensor,
+  useSensors
+} from "@dnd-kit/core";
+
+import type { DragEndEvent } from "@dnd-kit/core";
+
+import {
+  SortableContext,
+  useSortable,
+  horizontalListSortingStrategy,
+  arrayMove
+} from "@dnd-kit/sortable";
+
+import { CSS } from "@dnd-kit/utilities";
+
 /*
   checks whether a string is exactly 6 hexadecimal characters
   this prevents invalid values from breaking the app
@@ -21,7 +40,7 @@ const isValidHex = (hex: string) =>
   /^[0-9a-fA-F]{6}$/.test(hex);
 
 /*
-  takes the palette part of the url and converts it into an array of colors
+  converts the palette part of the url into an array of hex colors
 
   example:
   "778899-889977-fefefe"
@@ -30,107 +49,146 @@ const isValidHex = (hex: string) =>
 */
 const parsePaletteFromUrl = (palette: string) =>
   palette
-    .split("-")                // split the url string into individual hex values
-    .filter(isValidHex)        // discard anything that is not a valid hex code
-    .map(hex => `#${hex.toLowerCase()}`); // normalize format for css usage
+    .split("-")
+    .filter(isValidHex)
+    .map(hex => `#${hex.toLowerCase()}`);
+
+/*
+  single color item shape
+  id is required for react keys and drag-and-drop
+*/
+type ColorItem = {
+  id: string;
+  hex: string;
+  locked: boolean;
+};
+
+/*
+  wrapper that makes one color block sortable
+  it handles drag transforms and animation
+*/
+function SortableColorBlock({
+  color,
+  children
+}: {
+  color: { id: string };
+  children: (listeners: any) => React.ReactNode;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id: color.id });
+
+  const style = {
+    transform: transform
+      ? `translate3d(${transform.x}px, 0px, 0)`
+      : undefined,
+    transition,
+    zIndex: isDragging ? 1000 : "auto"
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        ...style,
+        flex: "1 1 0",
+        display: "flex"
+      }}
+      {...attributes}
+    >
+      {children(listeners)}
+    </div>
+  );
+}
 
 export default function ColorPaletteGenerator() {
   /*
-    reads the dynamic part of the route:
-    /colorpalettegenerator/:palette
-
-    palette will be undefined if the user visits the base route
+    reads the dynamic palette segment from the route
   */
   const { palette } = useParams();
 
   /*
-    allows programmatic navigation
-    we use this to update the url when new colors are generated
+    allows programmatic navigation to update the url
   */
   const navigate = useNavigate();
 
   /*
-    colors are stored as an array of hex strings
-    start empty so the url or generator decides what gets shown
+    stores the current palette state
   */
-  type ColorItem = {
-    id: string;
-    hex: string;
-    locked: boolean;
-  };
-
   const [colors, setColors] = useState<ColorItem[]>([]);
 
   /*
-    generates a new palette
-    updates both the visual state and the url
+    drag sensor configuration
+    prevents accidental dragging on click
   */
-  
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 5 }
+    })
+  );
+
+  /*
+    generates new colors while respecting locked ones
+    also updates the url to match the palette
+  */
   function generateColors() {
     setColors(prevColors => {
-      // first load: create default palette
-      if (prevColors.length === 0) {
-        const initialColors = Array.from({ length: 5 }, () => ({
-          id: `${Date.now()}-${Math.random()}`,
-          hex: colorAlgo(),
-          locked: false
-        }));
+      const updated =
+        prevColors.length === 0
+          ? Array.from({ length: 5 }, () => ({
+              id: crypto.randomUUID(),
+              hex: colorAlgo(),
+              locked: false
+            }))
+          : prevColors.map(color =>
+              color.locked
+                ? color
+                : { ...color, hex: colorAlgo() }
+            );
 
-        const paletteParam = initialColors
-          .map(c => c.hex.replace("#", "").toLowerCase())
-          .join("-");
-
-        navigate(`/colorpalettegenerator/${paletteParam}`, { replace: true });
-
-        return initialColors;
-      }
-
-      // normal generation: respect locks
-      const updatedColors = prevColors.map(color =>
-        color.locked
-          ? color
-          : { ...color, hex: colorAlgo() }
-      );
-
-      const paletteParam = updatedColors
+      const paletteParam = updated
         .map(c => c.hex.replace("#", "").toLowerCase())
         .join("-");
 
       navigate(`/colorpalettegenerator/${paletteParam}`, { replace: true });
 
-      return updatedColors;
+      return updated;
     });
   }
 
   /*
-    this effect keeps the app in sync with the url
-
-    it runs:
-    - when the page loads
-    - when the url palette changes
+    reorders colors when a drag finishes
+    also syncs the new order to the url
   */
-  useEffect(() => {
-    // do not overwrite existing state
-    if (colors.length > 0) return;
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
 
-    if (palette) {
-      const parsedColors = parsePaletteFromUrl(palette);
+    if (!over || active.id === over.id) return;
 
-      if (parsedColors.length > 0) {
-        setColors(
-          parsedColors.map(hex => ({
-            id: crypto.randomUUID(),
-            hex,
-            locked: false
-          }))
-        );
-        return;
-      }
-    }
+    setColors(prev => {
+      const oldIndex = prev.findIndex(c => c.id === active.id);
+      const newIndex = prev.findIndex(c => c.id === over.id);
 
-    generateColors();
-  }, [palette]);
+      const reordered = arrayMove(prev, oldIndex, newIndex);
 
+      const paletteParam = reordered
+        .map(c => c.hex.replace("#", "").toLowerCase())
+        .join("-");
+
+      navigate(`/colorpalettegenerator/${paletteParam}`, { replace: true });
+
+      return reordered;
+    });
+  }
+
+  /*
+    toggles the locked state of a color
+  */
   function toggleLock(id: string) {
     setColors(prev =>
       prev.map(color =>
@@ -141,6 +199,31 @@ export default function ColorPaletteGenerator() {
     );
   }
 
+  /*
+    syncs initial state from the url
+    runs on first load and when the url changes
+  */
+  useEffect(() => {
+    if (colors.length > 0) return;
+
+    if (palette) {
+      const parsed = parsePaletteFromUrl(palette);
+
+      if (parsed.length > 0) {
+        setColors(
+          parsed.map(hex => ({
+            id: crypto.randomUUID(),
+            hex,
+            locked: false
+          }))
+        );
+        return;
+      }
+    }
+
+    generateColors();
+  }, [palette, colors.length]);
+
   return (
     <>
       <div className={styles.toolbar}>
@@ -149,39 +232,51 @@ export default function ColorPaletteGenerator() {
         <button>Save</button>
       </div>
 
-      <div className={styles.palette}>
-        {colors.map(color => (
-          <div
-            key={color.id}
-            className={styles.color_block}
-            style={{ backgroundColor: color.hex }}
-          >
-            <div className={styles.hex_code_wrapper}></div>
+      <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+        <SortableContext
+          items={colors.map(c => c.id)}
+          strategy={horizontalListSortingStrategy}
+        >
+          <div className={styles.palette}>
+            {colors.map(color => (
+              <SortableColorBlock key={color.id} color={color}>
+                {(listeners) => (
+                  <div
+                    className={styles.color_block}
+                    style={{ backgroundColor: color.hex }}
+                  >
+                    <div className={styles.hex_code}>
+                      {color.hex.toUpperCase()}
+                    </div>
 
-            <div className={styles.hex_code}>
-              {color.hex.toUpperCase()}
-            </div>
+                    <div className={styles.color_features}>
+                      <FaCopy />
+                      <FaCheck />
+                      <FaArrowsAltH
+                        {...listeners}
+                        style={{ cursor: "grab" }}
+                      />
 
-            <div className={styles.color_features}>
-              <FaCopy />
-              <FaCheck />
-              <FaArrowsAltH />
+                      {color.locked ? (
+                        <FaLock onClick={() => toggleLock(color.id)} />
+                      ) : (
+                        <FaLockOpen onClick={() => toggleLock(color.id)} />
+                      )}
 
-              {color.locked ? (
-                <FaLock onClick={() => toggleLock(color.id)} />
-              ) : (
-                <FaLockOpen onClick={() => toggleLock(color.id)} />
-              )}
-
-              <FaRegHeart />
-              <FaHeart />
-              <FaTimes />
-            </div>
+                      <FaRegHeart />
+                      <FaHeart />
+                      <FaTimes />
+                    </div>
+                  </div>
+                )}
+              </SortableColorBlock>
+            ))}
           </div>
-        ))}
-      </div>
+        </SortableContext>
+      </DndContext>
     </>
   );
 }
+
 
 

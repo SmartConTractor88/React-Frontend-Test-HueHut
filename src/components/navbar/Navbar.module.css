@@ -4,6 +4,7 @@
   height: 8vh;
   background-color: #CCCCCC;
   position: relative;
+  overflow: hidden;
 }
 
 button {
@@ -43,15 +44,14 @@ button a {
 }
 
 .logo_wrapper {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   margin-left: 10px;
   position: relative;
-  gap: 0;
   height: 100%;
+  gap: 0;
   border-radius: 0px;
-  border: 1px transparent;
   font-size: 2em;
   font-weight: 500;
   font-family: inherit;
@@ -62,11 +62,15 @@ button a {
 
 .navbar_logo {
   font-family: 'Dongle', system-ui, sans-serif;
+  margin: 0;
+  padding-top: 7%;
+  display: flex;
   font-size: 2.5em;
   color: #3388EE;
   position: relative;
+  align-items: center;
   justify-content: center;
-  top: 7%;
+  height: 100%;
 }
 
 .logo_drop {
@@ -83,7 +87,11 @@ button a {
 .link_text {
   text-decoration: none;
   color: inherit;
+  display: inline-flex;
+  align-items: center;
+  height: auto;
 }
+
 
 @keyframes smoothDropAndReturn {
   0%   { transform: translateY(0); opacity: 1; }
