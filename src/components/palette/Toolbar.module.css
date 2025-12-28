@@ -1,0 +1,11 @@
+.toolbar {
+    height: 8vh;
+}
+
+button {
+  border: none !important;
+}
+
+button:hover {
+  background-color: #DDDDDD;
+}

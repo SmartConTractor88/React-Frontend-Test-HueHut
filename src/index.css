@@ -59,8 +59,11 @@ button {
   font-weight: 500;
   font-family: inherit;
   color: #e4e4e4;
-  background-color: #8a0000;
   cursor: pointer;
+}
+
+button:focus-visible {
+  outline: none;
 }
 
 button a {

@@ -1,8 +1,9 @@
 .navbar {
   display: flex;
   justify-content: space-between;
-  height: 8vh;
-  background-color: #CCCCCC;
+  height: 6vh;
+  background-color: #DDDDDD;
+  border-bottom: 1px solid #CCCCCC;
   position: relative;
   overflow: hidden;
 }
@@ -13,7 +14,7 @@ button {
   border-radius: 0px;
   border: none;
   padding: 0.6em 1.2em;
-  font-size: 1.2em;
+  font-size: 1.1em;
   color: black;
   background-color: transparent;
   cursor: pointer;
@@ -47,12 +48,12 @@ button a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: 10px;
+  margin-left: 30px;
   position: relative;
   height: 100%;
   gap: 0;
   border-radius: 0px;
-  font-size: 2em;
+  font-size: 1.8em;
   font-weight: 500;
   font-family: inherit;
   /*color: #e4e4e4; */

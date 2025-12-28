@@ -1,0 +1,105 @@
+/* Dynamic Colors */
+.light_text {
+  color: #ffffff;
+}
+.dark_text {
+  color: #111111;
+}
+
+/* Color Boxes */
+.color_block {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.hex_code_wrapper {
+  position: absolute;
+  background: transparent !important;
+  height: 50%;
+  width: 100%;
+  top: 0;
+  align-items: center;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center; /* center horizontally */
+  text-align: center;
+}
+
+.hex_code {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Centers it perfectly */
+  padding: 4px;
+  border-radius: 12px;
+  z-index: 2;
+}
+
+.hex_code:hover {
+  background-color: #d6d6d650;
+  cursor: pointer;
+}
+
+.color_features {
+  position: absolute;
+  background: transparent;
+  height: 50%;
+  width: 100%;
+  top: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px; /* Spacing between icons */
+  margin: 0;
+  padding: 0;
+}
+
+.color_block_copy, 
+.color_block_copied,
+.color_block_unlocked,
+.color_block_drag,
+.color_block_regheart,
+.color_block_solheart,
+.color_block_remove {
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.color_block_locked {
+  opacity: 1;
+}
+
+.color_block:hover :is(
+  .color_block_copy,
+  .color_block_copied,
+  .color_block_unlocked,
+  .color_block_drag,
+  .color_block_regheart,
+  .color_block_solheart,
+  .color_block_remove
+) {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Optional: Style the icons themselves */
+.color_features > * {
+  display: block;
+}
+
+/* Default grayscale colors as fallback */
+.color_block:nth-child(1) { background-color: #eeeeee; }
+.color_block:nth-child(2) { background-color: #d6d6d6; }
+.color_block:nth-child(3) { background-color: #b7b7b7; }
+.color_block:nth-child(4) { background-color: #7b7b7b; }
+.color_block:nth-child(5) { background-color: #5f5f5f; }

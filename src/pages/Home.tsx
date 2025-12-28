@@ -21,8 +21,6 @@ export default function Home() {
 
         <Link to="/colorpalettegenerator" 
         className={styles.link_text} 
-        target="_blank" 
-        rel="noopener noreferrer"
         >
           <Rectangle
             title="Palette Generator"
