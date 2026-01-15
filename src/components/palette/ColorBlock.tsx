@@ -23,6 +23,8 @@ type Props = {
   copied: boolean;
   onCopy: (id: string, hex: string) => void;
   onToggleLock: (id: string) => void;
+  onRemove: (id: string) => void;
+  canRemove: boolean;
   dragListeners: any;
 };
 
@@ -31,62 +33,71 @@ export default function ColorBlock({
   copied,
   onCopy,
   onToggleLock,
+  onRemove,
+  canRemove,
   dragListeners
 }: Props) {
   const dark = isDarkColor(color.hex);
 
   return (
-    <div
-      className={styles.color_block}
-      style={{ backgroundColor: color.hex }}
-    >
+    <div className={styles.color_block_wrapper}>
       <div
-        className={`${styles.hex_code} ${
-          dark ? styles.light_text : styles.dark_text
-        }`}
+        id={`color-${color.id}`}
+        className={styles.color_block}
+        style={{ backgroundColor: color.hex }}
       >
-        {color.hex.replace("#", "").toUpperCase()}
-      </div>
+        <div
+          className={`${styles.hex_code} ${
+            dark ? styles.light_text : styles.dark_text
+          }`}
+        >
+          {color.hex.replace("#", "").toUpperCase()}
+        </div>
 
-      <div
-        className={`${styles.color_features} ${
-          dark ? styles.light_text : styles.dark_text
-        }`}
-      >
-        {/* copy */}
-        {copied ? (
-          <FaCheck className={styles.color_block_copied} />
-        ) : (
-          <FaCopy
-            className={styles.color_block_copy}
-            onClick={() => onCopy(color.id, color.hex)}
-            style={{ cursor: "pointer" }}
+        <div
+          className={`${styles.color_features} ${
+            dark ? styles.light_text : styles.dark_text
+          }`}
+        >
+          {copied ? (
+            <FaCheck className={styles.color_block_copied} />
+          ) : (
+            <FaCopy
+              className={styles.color_block_copy}
+              onClick={() => onCopy(color.id, color.hex)}
+              style={{ cursor: "pointer" }}
+            />
+          )}
+
+          <FaArrowsAltH
+            {...dragListeners}
+            className={styles.color_block_drag}
+            style={{ cursor: "grab" }}
           />
-        )}
 
-        {/* drag */}
-        <FaArrowsAltH
-          {...dragListeners}
-          className={styles.color_block_drag}
-          style={{ cursor: "grab" }}
-        />
+          {color.locked ? (
+            <FaLock
+              className={styles.color_block_locked}
+              onClick={() => onToggleLock(color.id)}
+            />
+          ) : (
+            <FaLockOpen
+              className={styles.color_block_unlocked}
+              onClick={() => onToggleLock(color.id)}
+            />
+          )}
 
-        {/* lock */}
-        {color.locked ? (
-          <FaLock
-            className={styles.color_block_locked}
-            onClick={() => onToggleLock(color.id)}
-          />
-        ) : (
-          <FaLockOpen
-            className={styles.color_block_unlocked}
-            onClick={() => onToggleLock(color.id)}
-          />
-        )}
+          <FaRegHeart className={styles.color_block_regheart} />
+          <FaHeart className={styles.color_block_solheart} />
 
-        <FaRegHeart className={styles.color_block_regheart} />
-        <FaHeart className={styles.color_block_solheart} />
-        <FaTimes className={styles.color_block_remove} />
+          {canRemove && (
+            <FaTimes
+              className={styles.color_block_remove}
+              onClick={() => onRemove(color.id)}
+              style={{ cursor: "pointer" }}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

@@ -13,13 +13,22 @@ export default function ColorPaletteGenerator() {
     generateColors,
     toggleLock,
     handleDragEnd,
-    copyHex
+    copyHex,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
+    removeColor
   } = usePalette();
 
   return (
     <>
       <Toolbar
         onGenerate={generateColors}
+        onUndo={undo}
+        onRedo={redo}
+        canUndo={canUndo}
+        canRedo={canRedo}
       />
 
       <Palette
@@ -27,9 +36,9 @@ export default function ColorPaletteGenerator() {
         copiedId={copiedId}
         onCopy={copyHex}
         onToggleLock={toggleLock}
+        onRemove={removeColor}
         onDragEnd={handleDragEnd}
       />
-
     </>
   );
 }

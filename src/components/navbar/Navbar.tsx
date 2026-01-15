@@ -13,16 +13,7 @@ function Navbar() {
 
             <div className={styles.navbar_buttons}>
                 <button 
-                className={[styles.button, styles.home_button].join(" ")} 
-                onClick={() => console.log("CLICKED")}
-                >
-                    <NavLink to="/colorpalettegenerator">
-                        Generator
-                    </NavLink>
-                </button>
-
-                <button 
-                className={[styles.button, styles.home_button].join(" ")} 
+                className={[styles.button, styles.nav_button1].join(" ")} 
                 onClick={() => console.log("CLICKED")}
                 >
                     <NavLink to="/">
@@ -31,16 +22,25 @@ function Navbar() {
                 </button>
 
                 <button 
-                className={[styles.button, styles.community_button].join(" ")}
+                className={[styles.button, styles.nav_button2].join(" ")} 
+                onClick={() => console.log("CLICKED")}
                 >
-                    <NavLink to="/community">
+                    <NavLink to="/">
+                        Palettes
+                    </NavLink>
+                </button>
+
+                <button 
+                className={[styles.button, styles.nav_button3].join(" ")}
+                >
+                    <NavLink to="/">
                         Community
                     </NavLink>
                 </button>
 
                 <button 
-                className={[styles.button, styles.contact_button].join(" ")}>
-                    <NavLink to="/community">
+                className={[styles.button, styles.nav_button4].join(" ")}>
+                    <NavLink to="/">
                         Sign In
                     </NavLink>
                 </button>

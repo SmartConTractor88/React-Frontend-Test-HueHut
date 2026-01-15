@@ -7,9 +7,16 @@
 }
 
 /* Color Boxes */
+
+.color_block_wrapper {
+  flex: 1 1 0;
+  display: flex;
+}
+
 .color_block {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
@@ -42,7 +49,7 @@
 }
 
 .hex_code:hover {
-  background-color: #d6d6d650;
+  background-color: #ffffff40;
   cursor: pointer;
 }
 
@@ -72,10 +79,12 @@
   transform: translateY(6px);
   pointer-events: none;
   transition: opacity 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
 }
 
 .color_block_locked {
   opacity: 1;
+  cursor: pointer;
 }
 
 .color_block:hover :is(

@@ -1,11 +1,74 @@
 .toolbar {
-    height: 8vh;
-}
-
-button {
-  border: none !important;
-}
-
-button:hover {
+  height: 6vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   background-color: #DDDDDD;
+  border-bottom: 2px solid #CCCCCC;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  padding: 0px 20px;
+  user-select: none; /* prevent repeated clicks from selecting objects. visual upgrade */
 }
+
+.toolbar svg {
+  outline: none; /* prevent repeated clicks from selecting objects. visual upgrade */
+}
+
+.generate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 20px;
+  height: 75%;
+  border: 2px solid #CCCCCC;
+  border-radius: 12px;
+  transition-duration: 0.5s;
+  padding: 10px 24px;
+  cursor: pointer;
+}
+
+.generate:hover {
+  background-color: #CCCCCC;
+}
+
+.toolbar_functions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  font-size: 1em;
+}
+
+.undo_redo { 
+  display: flex; 
+  gap: 12px; 
+}
+
+.undo_redo svg {
+  cursor: pointer;
+}
+
+.disabled { 
+  opacity: 0.3; 
+  pointer-events: none; 
+  cursor: default;
+}
+
+.share_wrapper {
+  cursor: pointer;
+}
+
+.share_wrapper p svg {
+  margin-right: 8px;
+}   
+
+.save_wrapper {
+  cursor: pointer;
+}
+
+.save_wrapper p svg {
+  margin-right: 8px;
+}   
+

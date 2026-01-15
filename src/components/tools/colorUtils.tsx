@@ -31,12 +31,23 @@ export function isDarkColor(hex: string): boolean {
   becomes
   ["#778899", "#889977", "#fefefe"]
 */
+const MIN_COLORS = 2;
+const MAX_COLORS = 8;
+
 export function parsePaletteFromUrl(palette: string): string[] {
-  return palette
+  const colors = palette
     .split("-")
-    .filter(isValidHex)
-    .map(hex => `#${hex.toLowerCase()}`);
+    .map(c => `#${c}`)
+    .filter(hex => /^#[0-9a-fA-F]{6}$/.test(hex));
+
+  // enforce hard limits
+  if (colors.length < MIN_COLORS) {
+    return [];
+  }
+
+  return colors.slice(0, MAX_COLORS);
 }
+
 
 /*
   strips "#" and normalizes hex for url usage

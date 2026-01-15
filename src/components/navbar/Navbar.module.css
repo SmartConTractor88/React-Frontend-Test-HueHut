@@ -3,7 +3,8 @@
   justify-content: space-between;
   height: 6vh;
   background-color: #DDDDDD;
-  border-bottom: 1px solid #CCCCCC;
+  border-bottom: 2px solid #CCCCCC;
+  box-sizing: border-box;
   position: relative;
   overflow: hidden;
 }
@@ -29,26 +30,32 @@ button a {
   background-color: transparent;
 }
 
-.home_button:hover {
-  background-color: #88EE99;
+.nav_button1:hover {
+  background-color: #44AAFF;
   transition-duration: 0.3s;
 }
 
-.community_button:hover {
-  background-color: #DDEE33;
+.nav_button2:hover {
+  background-color: #44CCFF;
   transition-duration: 0.3s;
 }
 
-.contact_button:hover {
-  background-color: #FC7E40;
+.nav_button3:hover {
+  background-color: #44EEFF;
   transition-duration: 0.3s;
 }
+
+.nav_button4:hover {
+  background-color: #33FFFF;
+  transition-duration: 0.3s;
+}
+
 
 .logo_wrapper {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: 30px;
+  margin-left: 40px;
   position: relative;
   height: 100%;
   gap: 0;

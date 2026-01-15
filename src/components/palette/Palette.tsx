@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
+
 import { DndContext, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import {
   SortableContext,
   useSortable,
   horizontalListSortingStrategy
 } from "@dnd-kit/sortable";
+import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
+
+import { motion } from "framer-motion";
 
 import ColorBlock from "./ColorBlock";
 import type { ColorItem } from "./ColorBlock";
@@ -16,18 +20,24 @@ type Props = {
   copiedId: string | null;
   onCopy: (id: string, hex: string) => void;
   onToggleLock: (id: string) => void;
+  onRemove: (id: string) => void;
   onDragEnd: (event: any) => void;
 };
 
-/*
-  wrapper that makes one color block sortable
-  it handles drag transforms and animation
-*/
+type GhostColor = {
+  id: string;
+  hex: string;
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+};
+
 function SortableColorBlock({
   color,
   children
 }: {
-  color: { id: string };
+  color: ColorItem;
   children: (listeners: any) => React.ReactNode;
 }) {
   const {
@@ -39,26 +49,26 @@ function SortableColorBlock({
     isDragging
   } = useSortable({ id: color.id });
 
-  const style = {
-    transform: transform
-      ? `translate3d(${transform.x}px, 0px, 0)`
-      : undefined,
-    transition,
-    zIndex: isDragging ? 1000 : "auto"
-  };
-
   return (
-    <div
+    <motion.div
       ref={setNodeRef}
+      layout={!isDragging} // ✅ restore default behavior
       style={{
-        ...style,
         flex: "1 1 0",
-        display: "flex"
+        display: "flex",
+        transform: transform
+          ? `translate3d(${transform.x}px, 0, 0)`
+          : undefined,
+        transition,
+        zIndex: isDragging ? 1000 : "auto"
+      }}
+      transition={{
+        layout: { duration: 0.2, ease: "easeOut" }
       }}
       {...attributes}
     >
       {children(listeners)}
-    </div>
+    </motion.div>
   );
 }
 
@@ -67,40 +77,98 @@ export default function Palette({
   copiedId,
   onCopy,
   onToggleLock,
+  onRemove,
   onDragEnd
 }: Props) {
-  /*
-    drag sensor configuration
-    prevents accidental dragging on click
-  */
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 5 }
     })
   );
 
+  const [ghost, setGhost] = useState<GhostColor | null>(null);
+
+  const handleRemove = (id: string) => {
+    const el = document.getElementById(`color-${id}`);
+    const color = colors.find(c => c.id === id);
+
+    if (!el || !color) {
+      onRemove(id);
+      return;
+    }
+
+    const rect = el.getBoundingClientRect();
+
+    setGhost({
+      id,
+      hex: color.hex,
+      left: rect.left,
+      top: rect.top,
+      width: rect.width,
+      height: rect.height
+    });
+
+    // remove immediately → siblings animate
+    onRemove(id);
+
+    // cleanup ghost after fade
+    setTimeout(() => {
+      setGhost(null);
+    }, 150);
+  };
+
   return (
-    <DndContext sensors={sensors} onDragEnd={onDragEnd}>
-      <SortableContext
-        items={colors.map(c => c.id)}
-        strategy={horizontalListSortingStrategy}
+    <>
+      <DndContext
+        sensors={sensors}
+        modifiers={[restrictToHorizontalAxis]}
+        onDragEnd={onDragEnd}
       >
-        <div className={styles.palette}>
-          {colors.map(color => (
-            <SortableColorBlock key={color.id} color={color}>
-              {(listeners) => (
-                <ColorBlock
-                  color={color}
-                  copied={copiedId === color.id}
-                  onCopy={onCopy}
-                  onToggleLock={onToggleLock}
-                  dragListeners={listeners}
-                />
-              )}
-            </SortableColorBlock>
-          ))}
-        </div>
-      </SortableContext>
-    </DndContext>
+        <SortableContext
+          items={colors.map(c => c.id)}
+          strategy={horizontalListSortingStrategy}
+        >
+          <div className={styles.palette}>
+            {colors.map((color) => (
+              <React.Fragment key={color.id}>
+                <SortableColorBlock color={color}>
+                  {(listeners) => (
+                    <ColorBlock
+                      color={color}
+                      copied={copiedId === color.id}
+                      onCopy={onCopy}
+                      onToggleLock={onToggleLock}
+                      onRemove={handleRemove}
+                      canRemove={colors.length > 2}
+                      dragListeners={listeners}
+                    />
+                  )}
+                </SortableColorBlock>
+
+              </React.Fragment>
+            ))}
+          </div>
+
+        </SortableContext>
+      </DndContext>
+
+      {ghost && (
+        <motion.div
+          style={{
+            position: "fixed",
+            left: ghost.left,
+            top: ghost.top,
+            width: ghost.width,
+            height: ghost.height,
+            backgroundColor: ghost.hex,
+            pointerEvents: "none",
+            zIndex: 1009
+          }}
+          initial={{ opacity: 1 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.15, ease: "easeOut" }}
+        />
+      )}
+    </>
   );
 }
