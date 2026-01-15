@@ -12,4 +12,43 @@
   font-size: 1.4em;
   overflow: hidden;
   z-index: 1010;
+  user-select: none; 
 }
+
+.block_wrapper {
+  position: relative;       /* for Add button positioning */
+  flex: 1 1 0;             /* fill available width in palette */
+  height: 100%;            /* fill palette height */
+  display: flex;            /* so ColorBlock stretches */
+  flex-direction: column;   /* keep ColorBlock content vertical */
+}
+
+.edge_hover_zone {
+  position: absolute;
+  top: 10%;
+  right: 0;
+
+  width: 30%;
+  height: 80%;
+  border-radius: 50px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transform: translateX(50%); /* shift to block boundary */
+
+  z-index: 1010;
+
+}
+.edge_hover_zone:hover :global(.plus_button),
+:global(.plus_button:hover) {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.4);
+  transform: scale(1);
+}
+
+
+
+
+

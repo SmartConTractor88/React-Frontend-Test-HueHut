@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 
 import ColorBlock from "./ColorBlock";
 import type { ColorItem } from "./ColorBlock";
+import AddColorButton from "../rectangle/AddColorButton";
 
 import styles from "./Palette.module.css";
 
@@ -87,6 +88,8 @@ export default function Palette({
   );
 
   const [ghost, setGhost] = useState<GhostColor | null>(null);
+  const [hoveredEdgeIndex, setHoveredEdgeIndex] = useState<number | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleRemove = (id: string) => {
     const el = document.getElementById(`color-${id}`);
@@ -122,15 +125,22 @@ export default function Palette({
       <DndContext
         sensors={sensors}
         modifiers={[restrictToHorizontalAxis]}
-        onDragEnd={onDragEnd}
+        onDragStart={() => {
+          setIsDragging(true);
+          setHoveredEdgeIndex(null); // force-hide buttons immediately
+        }}
+        onDragEnd={(event) => {
+          setIsDragging(false);
+          onDragEnd(event); // preserve existing behavior
+        }}
       >
         <SortableContext
           items={colors.map(c => c.id)}
           strategy={horizontalListSortingStrategy}
         >
           <div className={styles.palette}>
-            {colors.map((color) => (
-              <React.Fragment key={color.id}>
+            {colors.map((color, i) => (
+              <div key={color.id} className={styles.block_wrapper}>
                 <SortableColorBlock color={color}>
                   {(listeners) => (
                     <ColorBlock
@@ -145,7 +155,25 @@ export default function Palette({
                   )}
                 </SortableColorBlock>
 
-              </React.Fragment>
+                {/* Add button for all but last block */}
+                {i < colors.length - 1 && colors.length < 8 && (
+                  <div
+                    className={styles.edge_hover_zone}
+                    style={{
+                      pointerEvents: isDragging ? "none" : "auto"
+                    }}
+                    onMouseEnter={() => setHoveredEdgeIndex(i)}
+                    onMouseLeave={() => setHoveredEdgeIndex(null)}
+                  >
+                    <AddColorButton
+                      visible={!isDragging && hoveredEdgeIndex === i}
+                      onClick={() => console.log("Add color at position", i + 1)}
+                    />
+                  </div>
+
+
+                )}
+              </div>
             ))}
           </div>
 
