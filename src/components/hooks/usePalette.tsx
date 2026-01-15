@@ -217,10 +217,21 @@ export function usePalette() {
     setColors(next);
   }
 
+  /* add / remove */ 
   function removeColor(id: string) {
     if (colors.length <= 2) return; // prevent removing below 2
     const next = colors.filter(color => color.id !== id);
     commit(next);
+  }
+
+  function addColor(index: number, newColor: ColorItem) {
+    if (colors.length >= 8) return; // max limit
+    const next = [
+      ...colors.slice(0, index + 1),
+      newColor,
+      ...colors.slice(index + 1)
+    ];
+    commit(next); // pushes to past for Undo/Redo
   }
 
   return {
@@ -234,6 +245,7 @@ export function usePalette() {
     redo,
     canUndo: past.length > 0,
     canRedo: future.length > 0,
-    removeColor
+    removeColor,
+    addColor
   };
 }

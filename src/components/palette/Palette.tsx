@@ -23,7 +23,9 @@ type Props = {
   onToggleLock: (id: string) => void;
   onRemove: (id: string) => void;
   onDragEnd: (event: any) => void;
+  onAddColor?: (index: number, newColor: ColorItem) => void; // two params now
 };
+
 
 type GhostColor = {
   id: string;
@@ -33,6 +35,34 @@ type GhostColor = {
   width: number;
   height: number;
 };
+
+// Utility: Hex → RGB
+function hexToRgb(hex: string) {
+  const clean = hex.replace(/^#/, '');
+  const bigint = parseInt(clean, 16);
+  return {
+    r: (bigint >> 16) & 255,
+    g: (bigint >> 8) & 255,
+    b: bigint & 255
+  };
+}
+
+// Utility: RGB → Hex
+function rgbToHex({ r, g, b }: { r: number; g: number; b: number }) {
+  const pad = (n: number) => n.toString(16).padStart(2, '0');
+  return `#${pad(r)}${pad(g)}${pad(b)}`;
+}
+
+// Average two hex colors
+function averageHex(hex1: string, hex2: string) {
+  const c1 = hexToRgb(hex1);
+  const c2 = hexToRgb(hex2);
+  return rgbToHex({
+    r: Math.round((c1.r + c2.r) / 2),
+    g: Math.round((c1.g + c2.g) / 2),
+    b: Math.round((c1.b + c2.b) / 2)
+  });
+}
 
 function SortableColorBlock({
   color,
@@ -53,7 +83,7 @@ function SortableColorBlock({
   return (
     <motion.div
       ref={setNodeRef}
-      layout={!isDragging} // ✅ restore default behavior
+      layout={!isDragging}
       style={{
         flex: "1 1 0",
         display: "flex",
@@ -63,9 +93,7 @@ function SortableColorBlock({
         transition,
         zIndex: isDragging ? 1000 : "auto"
       }}
-      transition={{
-        layout: { duration: 0.2, ease: "easeOut" }
-      }}
+      transition={{ layout: { duration: 0.2, ease: "easeOut" } }}
       {...attributes}
     >
       {children(listeners)}
@@ -79,15 +107,16 @@ export default function Palette({
   onCopy,
   onToggleLock,
   onRemove,
-  onDragEnd
+  onDragEnd,
+  onAddColor
 }: Props) {
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: { distance: 5 }
-    })
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
   );
 
-  const [ghost, setGhost] = useState<GhostColor | null>(null);
+  const [ghost, setGhost] = useState<GhostColor | null>(null); // for remove
+  const [addGhost, setAddGhost] = useState<GhostColor | null>(null); // for add
+  
   const [hoveredEdgeIndex, setHoveredEdgeIndex] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -111,13 +140,9 @@ export default function Palette({
       height: rect.height
     });
 
-    // remove immediately → siblings animate
     onRemove(id);
 
-    // cleanup ghost after fade
-    setTimeout(() => {
-      setGhost(null);
-    }, 150);
+    setTimeout(() => setGhost(null), 150);
   };
 
   return (
@@ -127,11 +152,11 @@ export default function Palette({
         modifiers={[restrictToHorizontalAxis]}
         onDragStart={() => {
           setIsDragging(true);
-          setHoveredEdgeIndex(null); // force-hide buttons immediately
+          setHoveredEdgeIndex(null);
         }}
         onDragEnd={(event) => {
           setIsDragging(false);
-          onDragEnd(event); // preserve existing behavior
+          onDragEnd(event);
         }}
       >
         <SortableContext
@@ -159,24 +184,50 @@ export default function Palette({
                 {i < colors.length - 1 && colors.length < 8 && (
                   <div
                     className={styles.edge_hover_zone}
-                    style={{
-                      pointerEvents: isDragging ? "none" : "auto"
-                    }}
+                    style={{ pointerEvents: isDragging ? "none" : "auto" }}
                     onMouseEnter={() => setHoveredEdgeIndex(i)}
                     onMouseLeave={() => setHoveredEdgeIndex(null)}
                   >
                     <AddColorButton
                       visible={!isDragging && hoveredEdgeIndex === i}
-                      onClick={() => console.log("Add color at position", i + 1)}
+                      onClick={() => {
+                        if (!onAddColor) return;
+
+                        const hex = averageHex(colors[i].hex, colors[i + 1].hex);
+                        const newColor: ColorItem = {
+                          id: crypto.randomUUID(),
+                          hex,
+                          locked: false
+                        };
+
+                        // Create ghost for smooth animation
+                        const el = document.getElementById(`color-${colors[i].id}`);
+                        if (el) {
+                          const rect = el.getBoundingClientRect();
+                          setAddGhost({
+                            id: newColor.id,
+                            hex,
+                            left: rect.right, // position at the right edge of current block
+                            top: rect.top,
+                            width: rect.width,
+                            height: rect.height
+                          });
+                        }
+
+                        // Trigger actual add after tiny delay so Framer Motion picks up layout
+                        setTimeout(() => {
+                          onAddColor(i, newColor);
+                          setAddGhost(null); // remove ghost after add
+                        }, 10);
+
+                        setHoveredEdgeIndex(null);
+                      }}
                     />
                   </div>
-
-
                 )}
               </div>
             ))}
           </div>
-
         </SortableContext>
       </DndContext>
 
@@ -194,6 +245,24 @@ export default function Palette({
           }}
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
+          transition={{ duration: 0.15, ease: "easeOut" }}
+        />
+      )}
+
+      {addGhost && (
+        <motion.div
+          style={{
+            position: "fixed",
+            left: addGhost.left,
+            top: addGhost.top,
+            width: addGhost.width,
+            height: addGhost.height,
+            backgroundColor: addGhost.hex,
+            pointerEvents: "none",
+            zIndex: 1009
+          }}
+          initial={{ opacity: 0.6, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.15, ease: "easeOut" }}
         />
       )}

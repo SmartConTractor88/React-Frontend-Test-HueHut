@@ -18,7 +18,8 @@ export default function ColorPaletteGenerator() {
     redo,
     canUndo,
     canRedo,
-    removeColor
+    removeColor,
+    addColor
   } = usePalette();
 
   return (
@@ -38,6 +39,7 @@ export default function ColorPaletteGenerator() {
         onToggleLock={toggleLock}
         onRemove={removeColor}
         onDragEnd={handleDragEnd}
+        onAddColor={(index, newColor) => addColor(index, newColor)}
       />
     </>
   );
