@@ -45,6 +45,7 @@
   transform: translate(-50%, -50%); /* Centers it perfectly */
   padding: 4px;
   border-radius: 12px;
+  cursor: pointer;
   z-index: 2;
 }
 

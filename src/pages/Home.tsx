@@ -1,14 +1,20 @@
 //import type { MouseEvent } from "react";
+import { usePageTitle } from "../components/hooks/usePageTitle";
 import styles from "./Home.module.css";
 import Rectangle from "../components/rectangle/rectangle1";
 import { Link } from "react-router-dom";
 import { FaPaintBrush, FaArrowRight } from "react-icons/fa";
 
 
+
 // Event handler
 //const handleClick = (event: MouseEvent) => console.log(event);
 
 export default function Home() {
+  
+  // tab header
+  usePageTitle("Home | HueHut");
+  
   return (
     <>
       <div className={styles.rectangle_grid}>
@@ -41,12 +47,16 @@ export default function Home() {
           />
         </Link>
 
+        <Link to="/community" 
+        className={styles.link_text}
+        >
         <Rectangle
           title="Community"
           caption="Learn more about our mission. Get in touch"
           icon={<FaArrowRight />}
           image="community_page.jpg"
         />
+        </Link>
       </div>
     </>
   )

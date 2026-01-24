@@ -1,4 +1,9 @@
+import { usePageTitle } from "../components/hooks/usePageTitle";
+
 export default function Community() {
+  
+  // tab header
+  usePageTitle("Community | HueHut")
   
   const items: string[] = ["red", "white", "green"];
 

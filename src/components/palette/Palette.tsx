@@ -23,7 +23,8 @@ type Props = {
   onToggleLock: (id: string) => void;
   onRemove: (id: string) => void;
   onDragEnd: (event: any) => void;
-  onAddColor?: (index: number, newColor: ColorItem) => void; // two params now
+  onAddColor?: (index: number, newColor: ColorItem) => void;
+  onUpdateColor: (id: string, hex: string) => void;
 };
 
 
@@ -81,9 +82,8 @@ function SortableColorBlock({
   } = useSortable({ id: color.id });
 
   return (
-    <motion.div
+    <div
       ref={setNodeRef}
-      layout={!isDragging}
       style={{
         flex: "1 1 0",
         display: "flex",
@@ -93,16 +93,23 @@ function SortableColorBlock({
         transition,
         zIndex: isDragging ? 1000 : "auto"
       }}
-      transition={{ layout: { duration: 0.2, ease: "easeOut" } }}
       {...attributes}
     >
-      {children(listeners)}
-    </motion.div>
+      {/* Framer Motion ONLY for layout of non-dragging items */}
+      <motion.div
+        layout={!isDragging}
+        transition={{ layout: { duration: 0.2, ease: "easeOut" } }}
+        style={{ flex: 1, display: "flex" }}
+      >
+        {children(listeners)}
+      </motion.div>
+    </div>
   );
 }
 
 export default function Palette({
   colors,
+  onUpdateColor,
   copiedId,
   onCopy,
   onToggleLock,
@@ -119,6 +126,8 @@ export default function Palette({
   
   const [hoveredEdgeIndex, setHoveredEdgeIndex] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+
+  const [interactionLocked, setInteractionLocked] = useState(false);
 
   const handleRemove = (id: string) => {
     const el = document.getElementById(`color-${id}`);
@@ -170,12 +179,17 @@ export default function Palette({
                   {(listeners) => (
                     <ColorBlock
                       color={color}
+                      onUpdateColor={onUpdateColor}
                       copied={copiedId === color.id}
                       onCopy={onCopy}
                       onToggleLock={onToggleLock}
                       onRemove={handleRemove}
                       canRemove={colors.length > 2}
                       dragListeners={listeners}
+                      disableTooltips={isDragging || interactionLocked}
+                      onPickerOpen={() => setInteractionLocked(true)}
+                      onPickerClose={() => setInteractionLocked(false)}
+                      
                     />
                   )}
                 </SortableColorBlock>
@@ -184,13 +198,16 @@ export default function Palette({
                 {i < colors.length - 1 && colors.length < 8 && (
                   <div
                     className={styles.edge_hover_zone}
-                    style={{ pointerEvents: isDragging ? "none" : "auto" }}
+                    style={{
+                      pointerEvents: isDragging || interactionLocked ? "none" : "auto"
+                    }}
                     onMouseEnter={() => setHoveredEdgeIndex(i)}
                     onMouseLeave={() => setHoveredEdgeIndex(null)}
                   >
                     <AddColorButton
                       visible={!isDragging && hoveredEdgeIndex === i}
                       onClick={() => {
+                        if (interactionLocked) return;
                         if (!onAddColor) return;
 
                         const hex = averageHex(colors[i].hex, colors[i + 1].hex);

@@ -1,5 +1,5 @@
 //import styles from "./ColorPaletteGenerator.module.css";
-
+import { usePageTitle } from "../components/hooks/usePageTitle";
 import { usePalette } from "../components/hooks/usePalette";
 import Toolbar from "../components/palette/Toolbar";
 import Palette from "../components/palette/Palette";
@@ -7,10 +7,14 @@ import Palette from "../components/palette/Palette";
 
 export default function ColorPaletteGenerator() {
 
+  // tab header
+  usePageTitle("Generate Palettes | HueHut");
+
   const {
     colors,
     copiedId,
     generateColors,
+    updateColor,
     toggleLock,
     handleDragEnd,
     copyHex,
@@ -40,6 +44,7 @@ export default function ColorPaletteGenerator() {
         onRemove={removeColor}
         onDragEnd={handleDragEnd}
         onAddColor={(index, newColor) => addColor(index, newColor)}
+        onUpdateColor={updateColor}
       />
     </>
   );

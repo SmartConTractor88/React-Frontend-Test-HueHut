@@ -31,22 +31,22 @@ button a {
 }
 
 .nav_button1:hover {
-  background-color: #44AAFF;
+  background-color: #88aaff;
   transition-duration: 0.3s;
 }
 
 .nav_button2:hover {
-  background-color: #44CCFF;
+  background-color: #a68dd5;
   transition-duration: 0.3s;
 }
 
 .nav_button3:hover {
-  background-color: #44EEFF;
+  background-color: #c46faa;
   transition-duration: 0.3s;
 }
 
 .nav_button4:hover {
-  background-color: #33FFFF;
+  background-color: #e25180;
   transition-duration: 0.3s;
 }
 

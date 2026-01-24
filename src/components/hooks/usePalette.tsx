@@ -156,6 +156,19 @@ export function usePalette() {
     commit(next);
   }
 
+  /*
+    manually edit colors
+  */
+  function updateColor(id: string, hex: string) {
+    const oldColor = colors.find(c => c.id === id);
+    if (!oldColor || oldColor.hex === hex) return; // no-op
+
+    const nextColors = colors.map(c =>
+      c.id === id ? { ...c, hex } : c
+    );
+
+    commit(nextColors);
+  }
 
   /*
     lock colors
@@ -238,6 +251,7 @@ export function usePalette() {
     colors,
     copiedId,
     generateColors,
+    updateColor,
     toggleLock,
     handleDragEnd,
     copyHex,
