@@ -1,0 +1,87 @@
+.rectangle {
+  aspect-ratio: 1 / 1;
+  position: relative;     
+  overflow: hidden;         
+
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+
+  background-color: #66947d;
+  background-image: var(--bg-image);
+  background-size: cover;
+  background-position: center;
+
+  color: #FEFEFE;
+  border-radius: 20px;
+  padding: 20px;
+
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+
+  cursor: pointer;
+  margin: 0;
+
+  transition: transform 0.2s ease;
+}
+
+/* On small screens, drop the square constraint so cards aren't too tall */
+@media (max-width: 600px) {
+  .rectangle {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+.rectangle::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background-image: var(--bg-image);
+  background-size: cover;
+  background-position: center;
+
+  filter: saturate(0);
+  transition: filter 0.3s ease;
+
+  z-index: 0;
+}
+
+/* Overlay layer */
+.rectangle::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+
+  z-index: 1;
+}
+
+/* Content layer */
+.rectangle > * {
+  position: relative;
+  z-index: 2;
+}
+
+.icon {
+  font-size: 3em;
+  transition: transform 0.6s ease-in-out;
+}
+
+.rectangle:hover {
+  transform: scale(1.03);
+}
+
+/* Hover: restore saturation */
+.rectangle:hover::before {
+  filter: saturate(1);
+}
+
+.rectangle:hover .icon {
+  transform: translateX(15px);
+}
