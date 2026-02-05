@@ -4,18 +4,15 @@ interface RectangleProps {
   title: string;       // required
   caption: string;     // required
   icon?: React.ReactNode; // optional
-  image?: string; // URL of the background image, optional
+  color?: string; // optional background color override
 }
 
 
-export default function Rectangle({ title, caption, icon, image }: RectangleProps) {
+export default function Rectangle({ title, caption, icon, color }: RectangleProps) {
   return (
-    <div className={styles.rectangle}
-      style={
-        image
-          ? { "--bg-image": `url(${image})` } as React.CSSProperties
-          : undefined
-      }
+    <div
+      className={styles.rectangle}
+      style={color ? { backgroundColor: color } : undefined}
     >
       <h1>{title}</h1>
       <h3>{caption}</h3>

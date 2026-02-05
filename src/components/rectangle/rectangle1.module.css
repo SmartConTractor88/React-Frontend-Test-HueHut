@@ -7,14 +7,13 @@
   min-width: 0;
   box-sizing: border-box;
 
-  background-color: #66947d;
-  background-image: var(--bg-image);
-  background-size: cover;
-  background-position: center;
+  background-color: rgba(0, 0, 0, 0.3);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 
   color: #FEFEFE;
   border-radius: 20px;
-  padding: 20px;
+  padding: 20px; 
 
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 
@@ -35,38 +34,7 @@
   }
 }
 
-.rectangle::before {
-  content: "";
-  position: absolute;
-  inset: 0;
 
-  background-image: var(--bg-image);
-  background-size: cover;
-  background-position: center;
-
-  filter: saturate(0);
-  transition: filter 0.3s ease;
-
-  z-index: 0;
-}
-
-/* Overlay layer */
-.rectangle::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-
-  background: rgba(0, 0, 0, 0.35);
-  pointer-events: none;
-
-  z-index: 1;
-}
-
-/* Content layer */
-.rectangle > * {
-  position: relative;
-  z-index: 2;
-}
 
 .icon {
   font-size: 3em;
@@ -75,11 +43,6 @@
 
 .rectangle:hover {
   transform: scale(1.03);
-}
-
-/* Hover: restore saturation */
-.rectangle:hover::before {
-  filter: saturate(1);
 }
 
 .rectangle:hover .icon {
