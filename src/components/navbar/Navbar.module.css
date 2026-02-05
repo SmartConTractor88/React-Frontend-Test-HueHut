@@ -1,7 +1,14 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
 .navbar {
   display: flex;
   justify-content: space-between;
   height: 6vh;
+  width: 100%;
   background-color: #DDDDDD;
   border-bottom: 2px solid #CCCCCC;
   box-sizing: border-box;
@@ -122,6 +129,27 @@ button a {
 
 .nav_button_menu {
   display: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+
+  .navbar {
+    height: 5%;
+    width: 100%;
+    justify-content: space-between;
+    padding: 0 12px;
+  }
+
+  .nav_button1,
+  .nav_button2,
+  .nav_button3,
+  .nav_button4 {
+    display: none; /* or pointer-events: none if preferred */
+  }
+
+  .nav_button_menu {
+    display: inline-flex;
+  }
 }
 
 

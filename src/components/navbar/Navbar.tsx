@@ -44,7 +44,8 @@ function Navbar() {
                 </button>
 
                 <button 
-                className={[styles.button, styles.nav_button4].join(" ")}>
+                className={[styles.button, styles.nav_button4].join(" ")}
+                >
                     <NavLink to="/">
                         Sign In <FaUser />
                     </NavLink>
