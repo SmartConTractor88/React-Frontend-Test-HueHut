@@ -3,6 +3,10 @@
   position: relative;     
   overflow: hidden;         
 
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+
   background-color: #66947d;
   background-image: var(--bg-image);
   background-size: cover;
@@ -22,6 +26,13 @@
   margin: 0;
 
   transition: transform 0.2s ease;
+}
+
+/* On small screens, drop the square constraint so cards aren't too tall */
+@media (max-width: 600px) {
+  .rectangle {
+    aspect-ratio: 4 / 3;
+  }
 }
 
 .rectangle::before {

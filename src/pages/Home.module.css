@@ -1,11 +1,33 @@
 .rectangle_grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 2 collumns */
-  gap: 40px;
-  margin: 40px 240px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  padding: 40px 5%;
+  max-width: 1400px;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .link_text {
   text-decoration: none;
   color: inherit;
+  display: block; /* ensure links fill the grid cell */
+}
+
+/* 2 columns on tablets / medium screens */
+@media (max-width: 1024px) {
+  .rectangle_grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    padding: 30px 4%;
+  }
+}
+
+/* 1 column on small / mobile screens */
+@media (max-width: 600px) {
+  .rectangle_grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 20px 4%;
+  }
 }
