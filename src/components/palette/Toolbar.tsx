@@ -8,7 +8,7 @@ import {
   FaBars
 } from "react-icons/fa";
 
-import Tooltip from "../rectangle/Tooltip"
+import Tooltip from "../box/Tooltip"
 import { shortcuts } from "../tools/utils/Shortcuts";
 
 type Props = {

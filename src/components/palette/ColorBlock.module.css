@@ -1,3 +1,8 @@
+/* Remove ugly focus rings for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
 /* Dynamic Colors */
 .light_text {
   color: #ffffff;
@@ -46,7 +51,7 @@
   padding: 4px;
   border-radius: 12px;
   cursor: pointer;
-  z-index: 2;
+  z-index: 1010;
 }
 
 .hex_code:hover {

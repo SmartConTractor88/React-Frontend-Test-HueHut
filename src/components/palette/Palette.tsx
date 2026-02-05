@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 
 import ColorBlock from "./ColorBlock";
 import type { ColorItem } from "./ColorBlock";
-import AddColorButton from "../rectangle/AddColorButton";
+import AddColorButton from "../box/AddColorButton";
 
 import styles from "./Palette.module.css";
 
@@ -127,7 +127,9 @@ export default function Palette({
   const [hoveredEdgeIndex, setHoveredEdgeIndex] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  const [interactionLocked, setInteractionLocked] = useState(false);
+  const [interactionLocked] = useState(false);
+
+  const [activePickerId, setActivePickerId] = useState<string | null>(null);
 
   const handleRemove = (id: string) => {
     const el = document.getElementById(`color-${id}`);
@@ -153,6 +155,8 @@ export default function Palette({
 
     setTimeout(() => setGhost(null), 150);
   };
+
+  const pickerOpen = activePickerId !== null;
 
   return (
     <>
@@ -187,8 +191,10 @@ export default function Palette({
                       canRemove={colors.length > 2}
                       dragListeners={listeners}
                       disableTooltips={isDragging || interactionLocked}
-                      onPickerOpen={() => setInteractionLocked(true)}
-                      onPickerClose={() => setInteractionLocked(false)}
+                      pickerActive={activePickerId === color.id}
+                      pickerLocked={activePickerId !== null}
+                      onPickerOpen={() => setActivePickerId(color.id)}
+                      onPickerClose={() => setActivePickerId(null)}
                       
                     />
                   )}
@@ -199,7 +205,7 @@ export default function Palette({
                   <div
                     className={styles.edge_hover_zone}
                     style={{
-                      pointerEvents: isDragging || interactionLocked ? "none" : "auto"
+                      pointerEvents: isDragging || pickerOpen ? "none" : "auto"
                     }}
                     onMouseEnter={() => setHoveredEdgeIndex(i)}
                     onMouseLeave={() => setHoveredEdgeIndex(null)}
@@ -208,6 +214,7 @@ export default function Palette({
                       visible={!isDragging && hoveredEdgeIndex === i}
                       onClick={() => {
                         if (interactionLocked) return;
+                        if (pickerOpen) return;
                         if (!onAddColor) return;
 
                         const hex = averageHex(colors[i].hex, colors[i + 1].hex);

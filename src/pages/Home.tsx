@@ -1,7 +1,7 @@
 //import type { MouseEvent } from "react";
 import { usePageTitle } from "../components/hooks/usePageTitle";
 import styles from "./Home.module.css";
-import Rectangle from "../components/rectangle/rectangle1";
+import Rectangle from "../components/box/rectangle1";
 import { Link } from "react-router-dom";
 import { FaPaintBrush, FaArrowRight } from "react-icons/fa";
 

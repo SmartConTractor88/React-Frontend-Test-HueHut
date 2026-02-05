@@ -11,10 +11,10 @@ import {
 
 import styles from "./ColorBlock.module.css";
 import { isDarkColor } from "../tools/colorUtils";
-import Tooltip from "../rectangle/Tooltip";
+import Tooltip from "../box/Tooltip";
 
 import { useRef, useState } from "react";
-import ColorInputBox from "../rectangle/ColorInputBox";
+import ColorInputBox from "../box/ColorInputBox";
 
 export type ColorItem = {
   id: string;
@@ -34,6 +34,8 @@ type Props = {
   disableTooltips?: boolean;
   onPickerOpen: () => void;
   onPickerClose: () => void;
+  pickerActive: boolean;
+  pickerLocked: boolean;
 };
 
 export default function ColorBlock({
@@ -47,8 +49,9 @@ export default function ColorBlock({
   dragListeners,
   disableTooltips = false,
   onPickerOpen,
-  onPickerClose
-  
+  onPickerClose,
+  pickerActive,
+  pickerLocked
 }: Props) {
   const hexRef = useRef<HTMLDivElement>(null);
 
@@ -69,6 +72,7 @@ export default function ColorBlock({
     value.replace(/[^0-9A-F]/gi, "").toUpperCase().slice(0, 6);
 
   const [editingHex, setEditingHex] = useState<string | null>(null);
+  
 
   return (
     <>
@@ -86,6 +90,7 @@ export default function ColorBlock({
             }`}
             tabIndex={0}
             onClick={(e) => {
+              if (pickerLocked && !pickerActive) return;
               e.stopPropagation();
               onPickerOpen();
               setPickerOpen(true);
@@ -136,6 +141,11 @@ export default function ColorBlock({
 
               setEditingHex(clean);
               setPreviewHex(`#${normalizeHex(clean)}`); // live preview only
+            }}
+
+            
+            style={{
+              pointerEvents: pickerLocked && !pickerActive ? "none" : "auto",
             }}
           >
             {(editingHex ?? color.hex.replace("#", "")).toUpperCase()}

@@ -1,6 +1,11 @@
 import styles from "./Navbar.module.css";
 import { Link, NavLink } from "react-router-dom";
 
+import {
+  FaUser,
+  FaBars
+} from "react-icons/fa";
+
 function Navbar() {
     return (
         <nav className={styles.navbar}>
@@ -41,9 +46,17 @@ function Navbar() {
                 <button 
                 className={[styles.button, styles.nav_button4].join(" ")}>
                     <NavLink to="/">
-                        Sign In
+                        Sign In <FaUser />
                     </NavLink>
                 </button>
+
+                <button 
+                className={[styles.button, styles.nav_button_menu].join(" ")}>
+                    <NavLink to="/">
+                        <FaBars />
+                    </NavLink>
+                </button>
+
             </div>
         </nav>
     );

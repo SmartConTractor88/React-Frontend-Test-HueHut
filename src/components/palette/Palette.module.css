@@ -1,3 +1,8 @@
+/* Remove ugly focus rings for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
 .palette {
   position: relative;
   display: flex;

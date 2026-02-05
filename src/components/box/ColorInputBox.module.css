@@ -172,12 +172,12 @@
 
 /* Apply button */
 .apply {
-  background: #3388EE; /* branding */
+  background: #3377DD; /* branding */
   color: #ffffff;
 }
 
 .apply:hover {
-  background: rgb(32, 85, 200);
+  background: #3388EE;
 }
 
 /* Cancel button */

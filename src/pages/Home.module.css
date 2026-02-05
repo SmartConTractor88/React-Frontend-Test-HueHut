@@ -1,6 +1,6 @@
 .rectangle_grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 2 collumns */
+  grid-template-columns: repeat(3, 1fr); /* 3 collumns */
   gap: 40px;
   margin: 40px 240px;
 }

@@ -208,13 +208,17 @@ export default function ColorInputBox({
       setSelectedHue(hsv.h);
       setMatrixSV({ s: hsv.s, v: hsv.v });
     }
-  }, [open, hex]);
+
+    requestAnimationFrame(() => inputRef.current?.select());
+
+  }, [open]);
 
   useEffect(() => {
     if (open) return;
 
     initialHSVRef.current = null;
     initialHexRef.current = null;
+
   }, [open]);
 
   const handleCancel = () => {
@@ -274,6 +278,7 @@ export default function ColorInputBox({
       s: round(clamp(hsv.s, 0, 1), 4),
       v: round(clamp(hsv.v, 0, 1), 4),
     });
+
   }, [hex, open]);
 
   /* ---------------- RENDER ---------------- */
